@@ -5,9 +5,11 @@ package br.com.furb.potentialfields;
  */
 public class ArtificialPotentialField {
 
+    private static final int SPREAD = 2;
     private final Map map;
     private final Cell objective;
     private final Cell agent;
+    private final int objectiveRadius;
     private Map resolved;
 
 
@@ -15,6 +17,7 @@ public class ArtificialPotentialField {
         this.map = map;
         this.objective = findObjectiveCell();
         this.agent = findStartCell();
+        this.objectiveRadius = objective.getRadius();
     }
 
     private Cell findObjectiveCell() {
@@ -32,11 +35,34 @@ public class ArtificialPotentialField {
             return resolved;
         }
         double distance = euclideanDistance(agent.getCoord(), objective.getCoord());
+        double angleObjectiveToAgent = Math.atan2(objective.getCoord().getY() - agent.getCoord().getY(),
+                objective.getCoord().getX() - agent.getCoord().getX());
 
+        double deltaX = 0;
+        double deltaY = 0;
+//        if d < r
+        if (distance < objectiveRadius) {
+            deltaX = 0;
+            deltaY = 0;
+        }
+
+//        if r≤d≤s+r
+        if (objectiveRadius <= distance && distance <= (SPREAD + objectiveRadius)) {
+            deltaX = Math.toDegrees(distance - objectiveRadius) * Math.cos(angleObjectiveToAgent);
+            deltaY = Math.toDegrees(distance - objectiveRadius) * Math.sin(angleObjectiveToAgent);
+        }
+
+//        if d > s + r
+        if (distance > (SPREAD + objectiveRadius)) {
+            deltaX = Math.toDegrees(SPREAD) * Math.cos(angleObjectiveToAgent);
+            deltaY = Math.toDegrees(SPREAD) * Math.sin(angleObjectiveToAgent);
+        }
 
         System.out.println("Coord. objetivo: " + objective);
         System.out.println("Coord. agent: " + agent);
-        System.out.println("Distancia: "+distance);
+        System.out.println("Distancia: " + distance);
+        System.out.println("Angulo: " + angleObjectiveToAgent);
+        System.out.println("Delta x/y: " + deltaX + " / " + deltaY);
         return resolved;
     }
 

@@ -2,6 +2,7 @@ package br.com.furb.potentialfields;
 
 /**
  * Created by thomas on 08/11/16.
+ * Implementação baseada no paper: http://phoenix.goucher.edu/~jillz/cs325_robotics/goodrich_potential_fields.pdf
  */
 public class Main {
 
