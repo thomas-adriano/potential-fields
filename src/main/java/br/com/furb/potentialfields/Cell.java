@@ -6,19 +6,23 @@ package br.com.furb.potentialfields;
 public class Cell {
 
     private final int value;
+    private final int radius;
+    private final Coordinate coord;
     private final CellTypes cellType;
 
-    public Cell(int value) {
-        this(value, CellTypes.NORMAL);
+    public Cell(Coordinate coord, int value) {
+        this(value, CellTypes.NORMAL, 1, coord);
     }
 
-    public Cell(CellTypes type) {
-        this(0, type);
+    public Cell(Coordinate coord, CellTypes type) {
+        this(0, type, 1, coord);
     }
 
-    public Cell(int value, CellTypes type) {
+    public Cell(int value, CellTypes type, int radius, Coordinate coord) {
         this.value = value;
         this.cellType = type;
+        this.radius = radius;
+        this.coord = coord;
     }
 
     public int getValue() {
@@ -29,8 +33,21 @@ public class Cell {
         return cellType;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
+    public Coordinate getCoord() {
+        return coord;
+    }
+
     @Override
     public String toString() {
-        return "{" + value + "," + cellType + '}';
+        return "{" +
+                "value=" + value +
+                ", radius=" + radius +
+                ", coord=" + coord +
+                ", cellType=" + cellType +
+                '}';
     }
 }
