@@ -11,11 +11,11 @@ public class Cell {
     private final CellTypes cellType;
 
     public Cell(Coordinate coord, int value) {
-        this(value, CellTypes.NORMAL, 1, coord);
+        this(value, CellTypes.NORMAL, 0, coord);
     }
 
     public Cell(Coordinate coord, CellTypes type) {
-        this(0, type, 1, coord);
+        this(0, type, 0, coord);
     }
 
     public Cell(int value, CellTypes type, int radius, Coordinate coord) {

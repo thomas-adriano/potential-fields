@@ -5,7 +5,7 @@ package br.com.furb.potentialfields;
  */
 public class ArtificialPotentialField {
 
-    private static final int SPREAD = 2;
+    private static final int SPREAD = 1;
     private final Map map;
     private final Cell objective;
     private final Cell agent;
@@ -58,11 +58,16 @@ public class ArtificialPotentialField {
             deltaY = Math.toDegrees(SPREAD) * Math.sin(angleObjectiveToAgent);
         }
 
+
+        double finalAngle = Math.toDegrees(Math.atan2(deltaY, deltaX));
+
         System.out.println("Coord. objetivo: " + objective);
         System.out.println("Coord. agent: " + agent);
         System.out.println("Distancia: " + distance);
         System.out.println("Angulo: " + angleObjectiveToAgent);
         System.out.println("Delta x/y: " + deltaX + " / " + deltaY);
+        System.out.println("Angulo final: " + finalAngle);
+
         return resolved;
     }
 
