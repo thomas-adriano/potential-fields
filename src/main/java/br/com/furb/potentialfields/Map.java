@@ -1,5 +1,7 @@
 package br.com.furb.potentialfields;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -39,6 +41,18 @@ public class Map {
                 c.accept(cells[y][x]);
             }
         }
+    }
+
+    public List<Cell> filter(Predicate<Cell> p) {
+        List<Cell> result = new ArrayList<>();
+        for (int x = 0; x < cells.length; x++) {
+            for (int y = 0; y < cells[0].length; y++) {
+                if (p.test(cells[y][x])) {
+                    result.add(cells[y][x]);
+                }
+            }
+        }
+        return result;
     }
 
     public Optional<Cell> filterFirst(Predicate<Cell> p) {

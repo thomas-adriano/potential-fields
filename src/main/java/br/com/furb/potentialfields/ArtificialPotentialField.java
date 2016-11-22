@@ -1,5 +1,7 @@
 package br.com.furb.potentialfields;
 
+import java.util.List;
+
 /**
  * Created by thomas on 08/11/16.
  */
@@ -9,14 +11,14 @@ public class ArtificialPotentialField {
     private final Map map;
     private final Cell objective;
     private final Cell agent;
+    private final List<Cell> obstacles;
     private final int objectiveRadius;
-    private Map resolved;
-
 
     public ArtificialPotentialField(Map map) {
         this.map = map;
         this.objective = findObjectiveCell();
         this.agent = findStartCell();
+        this.obstacles = findObstacles();
         this.objectiveRadius = objective.getRadius();
     }
 
@@ -30,10 +32,22 @@ public class ArtificialPotentialField {
                 .orElseThrow(() -> new RuntimeException("Celula inicial não encontrada"));
     }
 
-    public final Map resolveMap() {
-        if (resolved != null) {
-            return resolved;
-        }
+    private List<Cell> findObstacles() {
+        return map.filter((cell -> cell.getCellType() == CellTypes.OBSTACLE));
+    }
+
+    public final Action resolveAction() {
+        Deltas attractionDeltas = resolveAttraction();
+        Deltas rejectionDeltas = resolveRejection();
+        Deltas finalDeltas = attractionDeltas.combine(rejectionDeltas);
+
+        double finalAngle = Math.toDegrees(Math.atan2(finalDeltas.deltaY, finalDeltas.deltaX));
+        double velocity = Math.sqrt(Math.pow(finalDeltas.deltaX, 2) + Math.pow(finalDeltas.deltaY, 2));
+
+        return new Action(finalAngle, velocity);
+    }
+
+    private final Deltas resolveAttraction() {
         double distance = euclideanDistance(agent.getCoord(), objective.getCoord());
         double angleObjectiveToAgent = Math.atan2(objective.getCoord().getY() - agent.getCoord().getY(),
                 objective.getCoord().getX() - agent.getCoord().getX());
@@ -58,25 +72,33 @@ public class ArtificialPotentialField {
             deltaY = Math.toDegrees(SPREAD) * Math.sin(angleObjectiveToAgent);
         }
 
+        return new Deltas(deltaX, deltaY);
+    }
 
-        double finalAngle = Math.toDegrees(Math.atan2(deltaY, deltaX));
-        double velocity = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-
-        System.out.println("Coord. objetivo: " + objective);
-        System.out.println("Coord. agent: " + agent);
-        System.out.println("Distancia: " + distance);
-        System.out.println("Angulo: " + angleObjectiveToAgent);
-        System.out.println("Delta x/y: " + deltaX + " / " + deltaY);
-        System.out.println("Angulo final: " + finalAngle);
-        System.out.println("Velocidade: "+ velocity);
-
-        return resolved;
+    private final Deltas resolveRejection() {
+        return new Deltas(0, 0);
     }
 
     private double euclideanDistance(Coordinate start, Coordinate end) {
         double xCoord = Math.pow(end.getX() - start.getX(), 2);
         double yCoord = Math.pow(start.getY() - end.getY(), 2);
         return Math.sqrt(xCoord + yCoord);
+    }
+
+    private class Deltas {
+        public final double deltaX;
+        public final double deltaY;
+
+        public Deltas(double deltaX, double deltaY) {
+            this.deltaX = deltaX;
+            this.deltaY = deltaY;
+        }
+
+        public Deltas combine(Deltas d) {
+            double dX = this.deltaX + d.deltaX;
+            double dY = this.deltaY + d.deltaY;
+            return new Deltas(dX, dY);
+        }
     }
 
 }
