@@ -18,9 +18,9 @@ public class Map {
     }
 
     public static Map newEmptyMap(int width, int height) {
-        Cell[][] newCells = new Cell[width][height];
-        for (int x = 0; x < newCells.length; x++) {
-            for (int y = 0; y < newCells[0].length; y++) {
+        Cell[][] newCells = new Cell[height][width];
+        for (int y = 0; y < newCells.length; y++) {
+            for (int x = 0; x < newCells[0].length; x++) {
                 newCells[y][x] = new Cell(new Coordinate(x, y), 0);
             }
         }
@@ -36,8 +36,8 @@ public class Map {
     }
 
     public void forEach(Consumer<Cell> c) {
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[0].length; y++) {
+        for (int y = 0; y < cells.length; y++) {
+            for (int x = 0; x < cells[0].length; x++) {
                 c.accept(cells[y][x]);
             }
         }
@@ -45,8 +45,8 @@ public class Map {
 
     public List<Cell> filter(Predicate<Cell> p) {
         List<Cell> result = new ArrayList<>();
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[0].length; y++) {
+        for (int y = 0; y < cells.length; y++) {
+            for (int x = 0; x < cells[0].length; x++) {
                 if (p.test(cells[y][x])) {
                     result.add(cells[y][x]);
                 }
@@ -56,8 +56,8 @@ public class Map {
     }
 
     public Optional<Cell> filterFirst(Predicate<Cell> p) {
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[0].length; y++) {
+        for (int y = 0; y < cells.length; y++) {
+            for (int x = 0; x < cells[0].length; x++) {
                 if (p.test(cells[y][x])) {
                     return Optional.of(cells[y][x]);
                 }
@@ -80,15 +80,15 @@ public class Map {
 
     public Map putObstacleAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
-        newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.OBSTACLE);
+        newCells[y][x] = new Cell(new Coordinate(x, y), 1, CellTypes.OBSTACLE);
         return new Map(newCells);
     }
 
     private static final Cell[][] copyCells(Cell[][] src) {
         Cell[][] tmp = new Cell[src.length][src[0].length];
-        for (int x = 0; x < src.length; x++) {
-            for (int y = 0; y < src[0].length; y++) {
-                tmp[x][y] = src[x][y];
+        for (int y = 0; y < src.length; y++) {
+            for (int x = 0; x < src[0].length; x++) {
+                tmp[y][x] = src[y][x];
             }
         }
         return tmp;
@@ -97,9 +97,9 @@ public class Map {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int x = 0; x < cells.length; x++) {
-            for (int y = 0; y < cells[0].length; y++) {
-                String content = String.format("%15s", cells[x][y].toString());
+        for (int y = 0; y < cells.length; y++) {
+            for (int x = 0; x < cells[0].length; x++) {
+                String content = String.format("%15s", cells[y][x].toString());
                 sb.append(content)
                         .append(" | ");
             }
@@ -107,6 +107,22 @@ public class Map {
         }
         String toString = sb.toString();
         return "Map {\n" +
+                toString +
+                '}';
+    }
+
+    public String simplifiedToString() {
+        StringBuilder sb = new StringBuilder();
+        for (int y = 0; y < cells.length; y++) {
+            for (int x = 0; x < cells[0].length; x++) {
+                String content = String.format("%10s %s %s", cells[y][x].getCellType(), cells[y][x].getRadius(), cells[y][x].getCoord().toString());
+                sb.append(content)
+                        .append(" | ");
+            }
+            sb.append("\n");
+        }
+        String toString = sb.toString();
+        return "{\n" +
                 toString +
                 '}';
     }

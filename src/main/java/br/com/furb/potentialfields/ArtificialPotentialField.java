@@ -1,5 +1,6 @@
 package br.com.furb.potentialfields;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +49,7 @@ public class ArtificialPotentialField {
     }
 
     private final Deltas resolveAttraction() {
+        System.out.println("Calculando campo de objetivo "+objective);
         double distance = euclideanDistance(agent.getCoord(), objective.getCoord());
         double angleObjectiveToAgent = Math.atan2(objective.getCoord().getY() - agent.getCoord().getY(),
                 objective.getCoord().getX() - agent.getCoord().getX());
@@ -76,7 +78,38 @@ public class ArtificialPotentialField {
     }
 
     private final Deltas resolveRejection() {
-        return new Deltas(0, 0);
+        List<Deltas> obstaclesDeltas = new ArrayList<>();
+        obstacles.forEach(o -> {
+            System.out.println("Calculando campo de obstaculo "+o);
+            double distance = euclideanDistance(agent.getCoord(), o.getCoord());
+            double angleObstacleToAgent = Math.atan2(o.getCoord().getY() - agent.getCoord().getY(),
+                    o.getCoord().getX() - agent.getCoord().getX());
+
+            double deltaX = 0;
+            double deltaY = 0;
+
+//        if d < r
+            if (distance < o.getRadius()) {
+                deltaX = Math.toDegrees(-1 * (Math.signum(Math.cos(angleObstacleToAgent))));
+                deltaY = Math.toDegrees(-1 * (Math.signum(Math.sin(angleObstacleToAgent))));
+            }
+
+//        if r≤d≤s+r
+            if (o.getRadius() <= distance && distance <= (SPREAD + o.getRadius())) {
+                deltaX = Math.toDegrees(-1 * (SPREAD + o.getRadius() - distance) * Math.cos(angleObstacleToAgent));
+                deltaY = Math.toDegrees(-1 * (SPREAD + o.getRadius() - distance) * Math.sin(angleObstacleToAgent));
+            }
+
+//        if d > s + r
+            if (distance > (SPREAD + o.getRadius())) {
+                deltaX = 0;
+                deltaY = 0;
+            }
+
+            obstaclesDeltas.add(new Deltas(deltaX, deltaY));
+        });
+
+        return obstaclesDeltas.stream().reduce((prev, actual) -> prev.combine(actual)).orElse(new Deltas(0, 0));
     }
 
     private double euclideanDistance(Coordinate start, Coordinate end) {

@@ -6,10 +6,13 @@ package br.com.furb.potentialfields;
  */
 public class Main {
 
-    private static final Map WORLD_MAP = Map.newEmptyMap(4, 4).putObjectiveAt(3, 3).putAgentAt(0, 0);
+    private static final Map WORLD_MAP = Map.newEmptyMap(9, 7)
+            .putObjectiveAt(8, 6)
+            .putAgentAt(0, 0)
+            .putObstacleAt(1, 1);
 
     public static void main(String[] args) {
-        System.out.println("-----> Inicializando com mapa:\n" + WORLD_MAP);
+        System.out.println("-----> Inicializando com mapa:\n" + WORLD_MAP.simplifiedToString());
 
         ArtificialPotentialField apf = new ArtificialPotentialField(WORLD_MAP);
         Action act = apf.resolveAction();
