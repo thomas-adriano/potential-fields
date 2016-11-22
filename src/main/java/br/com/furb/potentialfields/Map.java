@@ -15,6 +15,16 @@ public class Map {
         this.cells = copyCells(cells);
     }
 
+    public static Map newEmptyMap(int width, int height) {
+        Cell[][] newCells = new Cell[width][height];
+        for (int x = 0; x < newCells.length; x++) {
+            for (int y = 0; y < newCells[0].length; y++) {
+                newCells[y][x] = new Cell(new Coordinate(x, y), 0);
+            }
+        }
+        return new Map(newCells);
+    }
+
     public Cell[][] getCells() {
         return cells;
     }
@@ -26,7 +36,7 @@ public class Map {
     public void forEach(Consumer<Cell> c) {
         for (int x = 0; x < cells.length; x++) {
             for (int y = 0; y < cells[0].length; y++) {
-                c.accept(cells[x][y]);
+                c.accept(cells[y][x]);
             }
         }
     }
@@ -34,8 +44,8 @@ public class Map {
     public Optional<Cell> filterFirst(Predicate<Cell> p) {
         for (int x = 0; x < cells.length; x++) {
             for (int y = 0; y < cells[0].length; y++) {
-                if (p.test(cells[x][y])) {
-                    return Optional.of(cells[x][y]);
+                if (p.test(cells[y][x])) {
+                    return Optional.of(cells[y][x]);
                 }
             }
         }
@@ -44,29 +54,19 @@ public class Map {
 
     public Map putAgentAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
-        newCells[x][y] = new Cell(new Coordinate(x, y), CellTypes.AGENT);
+        newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.AGENT);
         return new Map(newCells);
     }
 
     public Map putObjectiveAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
-        newCells[x][y] = new Cell(new Coordinate(x, y), CellTypes.OBJECTIVE);
+        newCells[y][x] = new Cell(new Coordinate(x, y), 1, CellTypes.OBJECTIVE);
         return new Map(newCells);
     }
 
     public Map putObstacleAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
-        newCells[x][y] = new Cell(new Coordinate(x, y), CellTypes.OBSTACLE);
-        return new Map(newCells);
-    }
-
-    public static Map newEmptyMap(int width, int height) {
-        Cell[][] newCells = new Cell[width][height];
-        for (int x = 0; x < newCells.length; x++) {
-            for (int y = 0; y < newCells[0].length; y++) {
-                newCells[x][y] = new Cell(new Coordinate(x, y), 0);
-            }
-        }
+        newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.OBSTACLE);
         return new Map(newCells);
     }
 

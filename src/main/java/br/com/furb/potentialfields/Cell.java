@@ -18,6 +18,10 @@ public class Cell {
         this(0, type, 0, coord);
     }
 
+    public Cell(Coordinate coord, int radius, CellTypes type) {
+        this(0, type, radius, coord);
+    }
+
     public Cell(int value, CellTypes type, int radius, Coordinate coord) {
         this.value = value;
         this.cellType = type;

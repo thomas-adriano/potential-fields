@@ -60,6 +60,7 @@ public class ArtificialPotentialField {
 
 
         double finalAngle = Math.toDegrees(Math.atan2(deltaY, deltaX));
+        double velocity = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
 
         System.out.println("Coord. objetivo: " + objective);
         System.out.println("Coord. agent: " + agent);
@@ -67,6 +68,7 @@ public class ArtificialPotentialField {
         System.out.println("Angulo: " + angleObjectiveToAgent);
         System.out.println("Delta x/y: " + deltaX + " / " + deltaY);
         System.out.println("Angulo final: " + finalAngle);
+        System.out.println("Velocidade: "+ velocity);
 
         return resolved;
     }
