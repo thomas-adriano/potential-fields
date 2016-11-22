@@ -15,9 +15,13 @@ public class Action {
 
     @Override
     public String toString() {
-        return "Action{" +
-                "directionAngle=" + directionAngle +
-                ", velocity=" + velocity +
+        return "{" +
+                "ang=" + Math.round(directionAngle) +
+                ", vel=" + Math.round(velocity) +
                 '}';
+    }
+
+    public static final Action emptyAction() {
+        return new Action(0, 0);
     }
 }

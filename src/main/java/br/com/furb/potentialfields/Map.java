@@ -21,7 +21,7 @@ public class Map {
         Cell[][] newCells = new Cell[height][width];
         for (int y = 0; y < newCells.length; y++) {
             for (int x = 0; x < newCells[0].length; x++) {
-                newCells[y][x] = new Cell(new Coordinate(x, y), 0);
+                newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.NORMAL);
             }
         }
         return new Map(newCells);
@@ -66,6 +66,12 @@ public class Map {
         return Optional.empty();
     }
 
+    public Map putNormalAt(int x, int y) {
+        Cell[][] newCells = copyCells(cells);
+        newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.NORMAL);
+        return new Map(newCells);
+    }
+
     public Map putAgentAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
         newCells[y][x] = new Cell(new Coordinate(x, y), CellTypes.AGENT);
@@ -75,6 +81,12 @@ public class Map {
     public Map putObjectiveAt(int x, int y) {
         Cell[][] newCells = copyCells(cells);
         newCells[y][x] = new Cell(new Coordinate(x, y), 1, CellTypes.OBJECTIVE);
+        return new Map(newCells);
+    }
+
+    public Map putCell(int x, int y, Cell cell) {
+        Cell[][] newCells = copyCells(cells);
+        newCells[y][x] = new Cell(cell);
         return new Map(newCells);
     }
 
@@ -115,7 +127,7 @@ public class Map {
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < cells.length; y++) {
             for (int x = 0; x < cells[0].length; x++) {
-                String content = String.format("%10s %s %s", cells[y][x].getCellType(), cells[y][x].getRadius(), cells[y][x].getCoord().toString());
+                String content = String.format("%10s %s %s", cells[y][x].getCellType(), cells[y][x].getCoord().toString(), cells[y][x].getAction().toString());
                 sb.append(content)
                         .append(" | ");
             }

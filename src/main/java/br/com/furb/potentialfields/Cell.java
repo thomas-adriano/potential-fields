@@ -5,32 +5,44 @@ package br.com.furb.potentialfields;
  */
 public class Cell {
 
-    private final int value;
+    private final Action action;
     private final int radius;
     private final Coordinate coord;
     private final CellTypes cellType;
 
-    public Cell(Coordinate coord, int value) {
-        this(value, CellTypes.NORMAL, 0, coord);
+    public Cell(Coordinate coord, Action action) {
+        this(action, CellTypes.NORMAL, 0, coord);
     }
 
     public Cell(Coordinate coord, CellTypes type) {
-        this(0, type, 0, coord);
+        this(Action.emptyAction(), type, 0, coord);
     }
 
     public Cell(Coordinate coord, int radius, CellTypes type) {
-        this(0, type, radius, coord);
+        this(Action.emptyAction(), type, radius, coord);
     }
 
-    public Cell(int value, CellTypes type, int radius, Coordinate coord) {
-        this.value = value;
+    public Cell(Cell cell) {
+        this(cell.getAction(), cell.getCellType(), cell.getRadius(), cell.getCoord());
+    }
+
+    public Cell(Cell cell, Coordinate coord) {
+        this(cell.getAction(), cell.getCellType(), cell.getRadius(), coord);
+    }
+
+    public Cell(Cell cell, Action act) {
+        this(act, cell.getCellType(), cell.getRadius(), cell.getCoord());
+    }
+
+    public Cell(Action action, CellTypes type, int radius, Coordinate coord) {
+        this.action = action;
         this.cellType = type;
         this.radius = radius;
         this.coord = coord;
     }
 
-    public int getValue() {
-        return value;
+    public Action getAction() {
+        return action;
     }
 
     public CellTypes getCellType() {
@@ -48,7 +60,7 @@ public class Cell {
     @Override
     public String toString() {
         return "{" +
-                "value=" + value +
+                "action=" + action +
                 ", radius=" + radius +
                 ", coord=" + coord +
                 ", cellType=" + cellType +

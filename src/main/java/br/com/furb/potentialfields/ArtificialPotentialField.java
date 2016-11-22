@@ -18,8 +18,8 @@ public class ArtificialPotentialField {
     public ArtificialPotentialField(Map map) {
         this.map = map;
         this.objective = findObjectiveCell();
-        this.agent = findStartCell();
         this.obstacles = findObstacles();
+        this.agent = findAgentCell();
         this.objectiveRadius = objective.getRadius();
     }
 
@@ -28,7 +28,7 @@ public class ArtificialPotentialField {
                 .orElseThrow(() -> new RuntimeException("Celula objetivo não encontrada"));
     }
 
-    private Cell findStartCell() {
+    private Cell findAgentCell() {
         return map.filterFirst((cell) -> cell.getCellType() == CellTypes.AGENT)
                 .orElseThrow(() -> new RuntimeException("Celula inicial não encontrada"));
     }
@@ -37,9 +37,20 @@ public class ArtificialPotentialField {
         return map.filter((cell -> cell.getCellType() == CellTypes.OBSTACLE));
     }
 
-    public final Action resolveAction() {
-        Deltas attractionDeltas = resolveAttraction();
-        Deltas rejectionDeltas = resolveRejection();
+    public Map resolveMap() {
+        Map result = new Map(this.map.getCells());
+        for (int y = 0; y < map.getCells().length; y++) {
+            for (int x = 0; x < map.getCells()[y].length; x++) {
+                Action curAct = resolveAction(new Cell(agent, new Coordinate(x, y)));
+                result = result.putCell(x, y, new Cell(map.getCell(x, y), curAct));
+            }
+        }
+        return result;
+    }
+
+    private final Action resolveAction(Cell agent) {
+        Deltas attractionDeltas = resolveAttraction(agent);
+        Deltas rejectionDeltas = resolveRejection(agent);
         Deltas finalDeltas = attractionDeltas.combine(rejectionDeltas);
 
         double finalAngle = Math.toDegrees(Math.atan2(finalDeltas.deltaY, finalDeltas.deltaX));
@@ -48,8 +59,7 @@ public class ArtificialPotentialField {
         return new Action(finalAngle, velocity);
     }
 
-    private final Deltas resolveAttraction() {
-        System.out.println("Calculando campo de objetivo "+objective);
+    private final Deltas resolveAttraction(Cell agent) {
         double distance = euclideanDistance(agent.getCoord(), objective.getCoord());
         double angleObjectiveToAgent = Math.atan2(objective.getCoord().getY() - agent.getCoord().getY(),
                 objective.getCoord().getX() - agent.getCoord().getX());
@@ -77,10 +87,9 @@ public class ArtificialPotentialField {
         return new Deltas(deltaX, deltaY);
     }
 
-    private final Deltas resolveRejection() {
+    private final Deltas resolveRejection(Cell agent) {
         List<Deltas> obstaclesDeltas = new ArrayList<>();
         obstacles.forEach(o -> {
-            System.out.println("Calculando campo de obstaculo "+o);
             double distance = euclideanDistance(agent.getCoord(), o.getCoord());
             double angleObstacleToAgent = Math.atan2(o.getCoord().getY() - agent.getCoord().getY(),
                     o.getCoord().getX() - agent.getCoord().getX());
