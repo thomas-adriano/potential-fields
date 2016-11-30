@@ -12,6 +12,7 @@ public class Main {
 
     private static final Map WORLD_MAP = Map.newEmptyMap(6, 6)
             .putObjectiveAt(5, 5)
+            .putObstacleAt(3, 3)
             .putAgentAt(0, 0);
 
     public static void main(String[] args) {

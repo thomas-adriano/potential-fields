@@ -42,7 +42,7 @@ public class ArtificialPotentialField {
         for (int y = 0; y < map.getCells().length; y++) {
             for (int x = 0; x < map.getCells()[y].length; x++) {
                 Action curAct = resolveAction(new Cell(agent, new Coordinate(x, y)));
-                result = result.putCell(x, y, new Cell(map.getCell(x, y), curAct));
+                result = result.putCell(y, x, new Cell(map.getCell(x, y), curAct));
             }
         }
         return result;
